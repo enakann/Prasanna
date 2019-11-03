@@ -1,0 +1,45 @@
+Domain Registrars - godaddy.com,
+
+When you bought a domain
+Every dns record starts with SOA
+SOA - Start Of Authority
+
+The name of the server that supplied the data for the zone
+The administrator of the zone
+The current version of the data file
+the default number of seconds for the time-to-live file on resource records
+
+hellocloudgurur --> .com ---> NS(Name Server records) --> SOA
+
+hellocloudguru2019.com  172800 IN NS ns.awsdns.com
+
+A record is the fundamental type of DNS record,the "A" in a A record
+stands for "Address".The A record is used by a computer to translate
+the name of the domain to an IP address
+
+for example http://www.acloudguru might point t http://123.10.10.80
+
+
+Routing Policies
+----------------
+1.Simple Routing
+   Just enter the ip address ,it gives back randomly
+2.Weighted Routing
+   Weight based routing
+3.Latency Based Routing
+   Route traffic based on the latency on the network
+4.Failover Routing Policy:
+   Active/Standy architecture
+   if active fails traffic will be routed to stanby
+5.Geolocation Routing policy
+    This lets you choose where your traffic will be sent
+    based on the georpahical location of your users
+    For example,you might want all queries from Europe to be routedd
+    to a fleet of EC2 instances that are specifically configured for your european customers
+6.Geoproximity Routing
+    Lets you route traffic based on the location of the user and the resource
+    It used bias as factor ,we must use traffic flow
+7.Multivalue Answer
+   same as simple routing policy but allows you to put health check on each records
+
+

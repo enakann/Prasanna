@@ -1,0 +1,128 @@
+1.Mongodb consist of multiple databases
+2.Each db conisst of multiple collection(its like a table)
+3.Each collection contains multiple documents(its like a row in rds)
+
+
+CREATE
+------
+1.insertOne(data,options)
+2.insertMany(data,options)
+Read
+----
+1.find(filter,options)
+2.findOne(filter,options)  #gives the first matching
+Update
+-------
+updateOne(filter,data,options)
+updateMany(filter,data,options)
+replaceOne(filter,data,options)
+DELETE
+------
+deleteOne(filter,options)
+deleteMany(filter,options)
+
+
+
+update one doc :  db.flightData.updateOne({distance:12000},{$set: {marker:'delete'} })
+update many  : db.flightData.updateMany({},{$set: {marker:'todelete'} })
+
+delete many : db.flightData.deleteMany({marker:'todelete'})
+
+insertmany: db.flightData.insertMany([
+   {
+     "departureAirport": "MUC",
+     "arrivalAirport": "SFO",
+     "aircraft": "Airbus A380",
+     "distance": 12000,
+     "intercontinental": true
+   },
+   {
+     "departureAirport": "LHR",
+     "arrivalAirport": "TXL",
+     "aircraft": "Airbus A320",
+     "distance": 950,
+     "intercontinental": false
+   }
+ ])
+
+gt find all :  db.flightData.find({distance: { $gt :900}}).pretty()
+gt find one : db.flightData.findOne({distance: { $gt :900}})
+updateone: db.flightData.updateOne({"departureAirport" : "MUC"},{$set: { delayed: true}})
+
+db.flightData.updateOne  --- it will only patch the existing object
+db.flightData.update      --- it will replace the existing object with the one being passed
+
+Prefer "replaceOne" instead of update to be more explicit that we are replacing the data
+
+
+foreach : db.passengers.find().forEach((passenger) => {printjson(passenger)} )   #use language specific driver syntax
+
+
+
+
+Projection
+==========
+db.passengers.find({},{ name: 1 }).pretty()  # retrive name & id
+db.passengers.find({},{ name: 1,_id:0 }).pretty()   #retrive only name
+
+Embedded Documents  (nested document)
+==================
+1.Up to 100 levels of Nesting
+2.Overall document size must be max of 16mb/document
+3.You can have array of embedded documents
+
+ db.flightData.updateMany({},{$set: { status: {description: "on-time",lastUpdated: "1 hour ago"  } }})
+
+ db.flightData.find().pretty()
+{
+        "_id" : ObjectId("5dbc5a67c2138b173b651a5a"),
+        "departureAirport" : "MUC",
+        "arrivalAirport" : "SFO",
+        "aircraft" : "Airbus A380",
+        "distance" : 12000,
+        "intercontinental" : true,
+        "delayed" : true,
+        "status" : {
+                "description" : "on-time",
+                "lastUpdated" : "1 hour ago"
+        }
+}
+{
+        "_id" : ObjectId("5dbc5a67c2138b173b651a5b"),
+        "departureAirport" : "LHR",
+        "arrivalAirport" : "TXL",
+        "aircraft" : "Airbus A320",
+        "distance" : 950,
+        "intercontinental" : false,
+        "status" : {
+                "description" : "on-time",
+                "lastUpdated" : "1 hour ago"
+        }
+}
+
+Accessing Structured data
+=======================
+{
+        "_id" : ObjectId("5dbc5a67c2138b173b651a5b"),
+        "departureAirport" : "LHR",
+        "arrivalAirport" : "TXL",
+        "aircraft" : "Airbus A320",
+        "distance" : 950,
+        "intercontinental" : false,
+        "status" : {
+                "description" : "on-time",
+                "lastUpdated" : "1 hour ago"
+        }
+}
+
+We can access the data inside the document
+db.flightData.findOne({'distance':950}).status
+
+db.flightData.find({"status.description":"on-time"}).pretty()
+
+
+Drop db & Collection
+=====================
+
+db.myCollection.drop()
+db.dropDatabase()

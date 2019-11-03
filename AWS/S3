@@ -1,0 +1,163 @@
+IAM is universal,It does not apply to regions
+New users have NO permission when first created
+New Users are assigned Access Key ID & Secret Access Keys when first created
+Access Key ID & Secret Access Key
+Always setup Multifactor authentication on your root account
+You can create and cusomize your own password rotation policies
+
+Create Billing Alarm
+---------------------
+We can create billing alarm through Cloudwatch alarms
+
+====
+S3 =
+====
+
+S3 is a safe place to store your files
+It is object based storage (0 to 5TB)
+Files are stored in bucket
+S3 is a universal namespace (ie it should be universally unique)https://s3-eu-west-1.amazonaws.com/acloudguru
+
+Each object:
+   Key (this is simply the name of the object)
+   Value(this is the data)
+   VersionId(important for versioning)
+   Metadata(data about data)
+   Subresources:
+       ACL
+       torrents
+
+Data consistency model:
+-----------------------
+* Read after write consistency for PUTS for new objects
+* Eventual consistency for overwrite PUTS and DELETES
+
+S3 has the following features
+-----------------------------
+Tiered storage available
+Life cycle management
+Versioning
+Encryption
+MFA Delete
+Secure your data using ACL and bucket policies
+
+S3 Storage Classes
+-------------------
+1.S3 standard
+2.S3-IA (Infrequently accessed)
+3.S3 One Zone - IA
+4.S3 Intelligent Tiering
+5.S3 Glacier
+6.S3 Glacier Deep Archive
+
+S3 Charges
+---------
+Storage
+Requests
+Storage Management Pricing
+Data Transfer pricing
+Transfer acceleration
+Cross Region replication pricing
+
+Control access to buckets using either a bucket ACL or using bucket policies
+
+Encryption
+----------
+BY default ,all newly created buckets are private,you can setup acess control your bucket using
+* Bucket policies
+* Acess Control Lists
+
+S3 bucket can be configured to create access logs
+which log all request made to s3 bucket
+This can be sent to another bucket and even another bucket in another account
+
+Encryption in Transit is achieved by https (SSL/TLS)
+Encryption at Rest:
+   Server Side:
+      * S3 Managed keys - SSE-S3
+      * AWS key Management service,managed keys SSE-KMS
+      * Server side with client provided keys -> SSE-C
+   Client Side:
+      * client encrypt the file and upload it to S3
+
+Versioning
+----------
+
+Stores all version of an object
+Once enabled ,versioning cannot be disabled
+Integrate with Lifecycle rules
+MFA delete capability
+With versioning ON if file is deleted it only keeps delete marked on it but it doesnt delete the file
+with versioning oFF if file is deletes it actually deletes it
+
+
+Life cycle Management
+--------------------
+
+Use LCM rules to manage your objects
+Automate transition to tiered storage
+Expire objects when needed
+
+1)Create a Life cycle rule
+2)Storage class transition for current version and previous version
+3)Transistion to S-IA after 30 days
+4)We can configure expiration for current version and previous version
+5)Clean up incomplete multipart uploads
+
+Cross Region Replication
+------------------------
+Versioning must be enabled on both source and destination buckets
+Regions must be unique
+Files in an existig bucket are not replicated automatically
+All subsequent updated files will be replicated automatically
+Delete markers are not replicated
+Deleting individual version or delete markers will not be replicated
+
+
+S3 Transfer acceleration
+-------------------------
+
+S3 Transfer acceleration utilised the cloudfront edge network to caccelerate your uploads to se.
+Instead of uploading directly to your s3 bucket,you can use a distinct URL to upload
+directly to an edge location which will then transfer that file to s3.
+you will get a distinct URL to upload to
+
+
+CloudFront
+---------
+
+Content delivery network(CDN)
+
+Edge Location - This is the location where the content will be cached
+Origin - This is the origin of all the files that the CDN will distribute,
+  This can be an S3 Bucket ,an EC2 intance,ELB
+Distribution-collection of Edge locations
+
+Content will be cached based on TTL
+Amazon cloud
+
+We can restrict cloud front using singed url or cookies
+we can use web application firewall
+
+Edge locations are not just readonly you can write to them aswel
+You can invalidate cached objects but you will be charged
+
+
+Snowball
+---------
+Snowball is a petabyte-scale hard disk
+
+Storage Gateway
+---------------
+Storage gateway that connects an on-premised software applicance
+
+File Gateway (NFS & SMB)
+Volume Gateway(iSCSI)
+ * Stored Volumes
+
+File Gateway - Flat files,stored directly on s3
+
+Volume Gateway:
+  Stored volume - Entire data set is stored on site and its asyncly backe upt to s3
+  cached volume - Entire data set is stored on s3 and the most frequently accessed data is cached on site
+

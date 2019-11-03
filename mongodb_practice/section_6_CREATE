@@ -1,0 +1,25 @@
+1.insertOne
+2.insertMany
+3.insert  (it doesnt return the inserted id,so its not recommended)
+4.mongoimport - mongoimport -d cars -c carsList --drop --jsonArray
+
+5. {ordered:false}
+ db.persons.insertMany([{_id:ObjectId("5dbd8a5caca2de4b84273baf"),name:"kannan",age:30},{name:"vaisu",age:28}],{ordered:false})
+ {ordered:false} option will insert the data other than the ones that are failed
+
+6.WriteConcern
+
+client(shell) ----> MongoDb server(mongod)--->Storage Engine(Memory or Disk)
+{w:1,j:undefined)
+w -> write ,1-> how many instances you have the write to be inserted
+j -> journal (addition engine that storage engine manages,its a "Todo" file)
+
+journal file is real file on the disk
+it will be used when server is restarted to write it into the disk
+
+{w:1,j:true} --> acknowlede only after writing into disk
+
+{w:1,wtimeout:200,j:true} --> how much time you give the server to return a succesfull ack
+
+
+

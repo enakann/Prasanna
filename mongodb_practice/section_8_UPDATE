@@ -1,0 +1,109 @@
+{ "_id" : ObjectId("5dbdc652aca2de4b84273bb4"), "name" : "navi", "age" : 20 }
+
+ db.user.updateOne({_id:ObjectId("5dbdc652aca2de4b84273bb4")},{$set:{hobbies:[{title:"cooking"},{title:"sports"}]}})
+{ "acknowledged" : true, "matchedCount" : 1, "modifiedCount" : 0 }
+
+{ "_id" : ObjectId("5dbdc652aca2de4b84273bb4"), "name" : "navi", "age" : 20, "hobbies" : [ { "title" : "cooking" }, { "title" : "sports" } ] }
+
+
+db.user.updateMany({"hobbies.title":"sports"},{$set:{isSporty:true}})
+{ "acknowledged" : true, "matchedCount" : 2, "modifiedCount" : 2 }
+
+
+$inc
+====
+
+{ "_id" : ObjectId("5dbdc652aca2de4b84273bb4"), "name" : "navi", "age" : 20, "hobbies" : [ { "title" : "cooking" }, { "title" : "sports" } ], "isSporty" : true }
+db.user.updateOne({name:"navi"},{$inc:{age:2}})
+{ "_id" : ObjectId("5dbdc652aca2de4b84273bb4"), "name" : "navi", "age" : 22, "hobbies" : [ { "title" : "cooking" }, { "title" : "sports" } ], "isSporty" : true }
+
+
+$unset
+=======
+will remove the field
+
+
+$elemMatch
+========
+
+db.user.find({hobbies:{$elemMatch:{title:"sport",frequency:{$gte:3}}}})   --> it will find the documents with sport & frequency of sport gte 3
+
+db.user.find({$and:[{"hobbies.title":"sport"},{"hobbies.frequency":3}]})  ---> this is not accurate ,as it will return doc even if the frequency is gte 3 for other hobbies not only for sport
+
+
+Create new field on the selected data
+=======================================
+Updating Matched array element
+===============================
+db.user.updateMany({ hobbies:{$elemMatch:{ title:"sport","frequency":{$gte:2 }}}},{$set:{ "hobbies.$.highFreq":true } })
+
+db.user.updateMany({ hobbies:{$elemMatch:{ title:"sport","frequency":{$gte:2 }}}},{$set:{ "hobbies.$.highFreq":true ,"age":30}})   #also updating existing data
+
+Update all array element
+========================
+db.user.updateMany({"hobbies.frequency":{$gt:2}},{$inc:{"hobbies.$[].frequency":2}})
+
+
+
+Update specific array element
+============================
+
+before:
+
+{
+        "_id" : ObjectId("5dbdc7fcaca2de4b84273bb6"),
+        "name" : "navi1",
+        "age" : 30,
+        "hobbies" : [
+                {
+                        "title" : "sport",
+                        "frequency" : 13,
+                        "highFreq" : true
+                },
+                {
+                        "title" : "cooking",
+                        "frequency" : 14
+                }
+        ],
+        "isSporty" : true
+}
+
+db.user.updateMany({"hobbies.frequency":{$gt:13}},{$set:{"hobbies.$[el].goodfrequency":true }},{arrayFilters:[{"el.frequency":{$gt:13}}]})
+
+{
+        "_id" : ObjectId("5dbdc7fcaca2de4b84273bb6"),
+        "name" : "navi1",
+        "age" : 30,
+        "hobbies" : [
+                {
+                        "title" : "sport",
+                        "frequency" : 13,
+                        "highFreq" : true
+                },
+                {
+                        "title" : "cooking",
+                        "frequency" : 14,
+                        "goodfrequency" : true  #note only this element is modified
+                }
+        ],
+        "isSporty" : true
+}
+
+Add element into an array
+========================
+
+db.user.updateOne({name:"divi"},{$push:{ hobbies: {title:"sport",frequency:3 }}})
+db.user.updateOne({name:"divi"},{$push:{hobbies :{ $each : [{title:"cooking",frequency:2 }]}}})    #multiple
+
+
+Remove element from an array
+=============================
+
+db.user.updateOne({name:"divi"},{$pull:{hobbies: {title: "cooking" }}})
+
+db.user.updateOne({name:"divi"},{$pop:{hobbies: 1}})   ---> remove last element
+
+idempotent add element to array
+===============================
+
+db.user.updateOne({name:"divi"},{$addToSet:{hobbies:{title:"sport"  } }})  --> it will not add the element if its already present

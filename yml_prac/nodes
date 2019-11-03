@@ -1,0 +1,14 @@
+driver_control:
+  package: ros2_pub_py
+  node_executable: driver_control
+  output : screen
+  param :
+    - ./myparams.yml
+  node_name: driver_control
+driver_control_sub:
+  package: ros2_pub_py
+  node_executable: driver_control_sub
+  output: screen
+  parameters:
+    - ./myparams
+  node_name: driver_control_sub

@@ -1,0 +1,287 @@
+EC2 :
+==========
+pricing:
+---------
+ -  On-demand
+ -  Reserved
+     - standard reserved instances
+     - convertiable reserved instances
+     - scheduled reserved instances
+ -  Spot
+     Applications that have flexible start and end times
+ - Dedicated Hosts
+
+ F1  - Field programmable gate array
+ I3  - High speed storage
+ G3 - Grpahics Intensive
+ H1 - High Disk throughput
+ T3  - Lowest cost,general purpose
+ D2 - Dense Storage
+ R5 - Memory optimized
+
+ FIGHTDRMCPXZAU
+
+* Termination protection is turned off by default ,you must turn it on
+* On an EBS-backed instance,the default action is for the root
+EBS volume to be deleted when the instance is terminated
+* EBS root volume of you default ami's cannot be encrypted
+* Additional volumes can be encrypted
+
+* All inbound traffic is blocked by default
+* All Outbound traffic is allowed
+* Changes to security group take effect immediately
+* you can have any number of Ec2 instances within a security group
+* You can have multiple security groups attached to EC2 instances
+* Security groups are stateful
+* If you create inbound rule allowing traffic ,that traffic is
+  automatically allowed back out again
+* You cannot block specific IP address using security group,
+instead use Network Access Control Lists
+* You can specify allow rules but not deny rules
+
+
+EBS
+=====
+
+Elastic block storage
+
+EBS provides persistent block storage volumes for use with Amazon EC2
+instance with AWS cloud
+
+Each EBS volume is automatically replicated within its AZ to protect you
+from component failure ,offering high availability and durability
+
+* Genreral Purpose (SSD) [gp2] - (Most work loads)General purpose SSD volume that balances price
+     and performance for a wide variety of transactional workloads
+
+* Provisioned IOPS(SSD) [io1] - (Databases) Highest performance SSD volume designed for mission critical applications
+
+* Throughput Optimized(HDD) [st1] - (Big data & Ware house) Low cost HDD volume designed for frequently accessed ,throuhput-intesive workloads
+
+* Cold HDD [sc1] - (file servers) Lowest cost HDD volume designed for less frequently accessed workloads
+
+* EBS Magnetic (Previous generation HDD) Workloads where the data is infrequntly accessed
+
+Volumes & Snapshot
+==================
+* EBS volume will be same AZ as EC2
+* To move volume to another AZ:
+     Create a snapshot -- Create Image(AMI) --- Create EC2 instance in different AZ
+     Create a snapshot -- Copy AMI (from one region to another)
+* If I terminate Ec2 instance is deleted only root volume will be terminated
+  but the additional volumes will persist (will not be deleted)
+
+* TO Create a snapshot for AMaxon EBS volumes that servers as root device
+  you should stop the instances before taking the snapshot
+* You can create AMI from both volumes and snapshosts
+* You can change EBS volume sizes on the fly,including changing the size and storage type
+* Volumes will always be in the same AZ as teh EC2 instance
+
+AMI Types
+==========
+(EBS vs Instance Store)
+
+You can select AMI based on :
+* Region
+* Operating system
+* Architecture
+* Launch Permissions
+* Storage for the root device(Root device volume)
+    - Instance store (Ephemeral Storage)
+    - EBS Backed volumes
+ EBS: The root decice for an instance launced from the AMI is an amazon EBS volume created from an Amazon EBS snapshot
+ Instance Store Volumes: THe root device for an instance launced from the AMI is an instance
+                        store volume create
+ If EC2 is stopped instance store volumes will be deleted
+ By default both EBS & Instance store root volume will be deleted but we can tell
+  it to keep the root volume for EBS backed instances
+
+Encrypted Root device volumes & snapshots
+==========================================
+How to Encrypt rot
+
+provision Ec2 with uncrypted volume -- Take a snapshot -- make a copy of snapshot
+while copying encrypt the device -- create AMI --provision Ec2 from this AMI
+
+Now we can encrypt the root volume while provisioning itself
+
+* Snapshots of encrypted volumes are ecnrypted
+* volumes restored from encrypted snapshots are encrypted
+* You can share snapshots but only if they are unencrypted
+* These snapshots can be share with other AWS accounts or made public
+
+
+CloudWatch 101
+===============
+
+Cloud watch is the monitoring services
+Cloudwatch can monitor things like
+* Compute:
+    * Ec2 Instance
+    * Autoscaling groups
+    * Route53 Health checks
+
+* Cloud watch can monitor at host level
+  CPU
+  Network
+  Disk
+  Status check
+
+* Cloud Trail -- Increases visibility into you user
+ and resource activity by recording AWS Management console
+
+* Cloud Trail records API calls
+* CLoudwatch with EC2 will monitor events every 5 minutes by default
+* You can create cloud watch alarm which trigger notifications
+* Cloudwatch is all about performance ,CloudTrail is all about auditing
+
+
+AMI
+===
+
+curl http://169.254.169.254/latest/user-data
+
+curl http://169.254.169.254/latest/meta-data
+
+curl http://169.254.169.254/latest/meta-data/local-ipv4
+
+curl http://169.254.169.254/latest/meta-data/public-ipv4
+
+EFS
+===
+We cannot have 2 EC2 instance sharing a EBS volume
+but 2 EC2 can share EFS
+
+Amazon EFS,storage capacity is elastic,growing and shrinking automatically as you add and remove files
+so your applications have the storage they need,when they need it
+
+Storage -EFS
+Different AZ it can spread
+
+Throughput
+----------
+Bursting
+Provisioned
+
+Performance mode
+---------------
+General Purpose
+Max I/O
+
+Enable Encryption
+-----------------
+ KMS
+
+To make EFS work nfs-utils should be installed
+Add NFS to the security group
+
+cd /var/www
+mount -t efs -o tls fs-9816b269:/ /var/www/html
+
+
+Exam
+----
+Support NFS4 protocol
+You only pay for storage you use
+can scale up to petabytes
+Can support thousand of concurrent NFS connections
+Data is stored across multiple AZ within region
+Read Write Consistency
+
+
+EC2 Placement Groups
+====================
+
+Way of Placing EC2
+
+1.Clustered Placement group
+2.Spread Placement group
+3.Partitioned
+
+
+* Clustered Placement Group (Low latency /high throuhput)
+---------------------------
+
+A cluster placement group is a grouping of instance
+within a single AZ
+Placement groups are recommened for applications that need low network latency
+high network throughput or both
+
+* Spread (Individual critical Ec2 instances)
+---------
+
+A spread placement group is a group of instance that are each
+placed on distinct underlying hardware
+Spread Placement groups are recommended for applications that have a small
+number of critical instances that should be kept separate from each other
+
+
+* Paritioned
+------------
+Similar to Spread
+- When using it Ec2 divides each group into logical segments partitions
+Amazon Ec2 ensures that each partitions
+- We can have multiple instance in the partitions
+Each rack has its own network and power source
+
+
+=====================================================================
+EC2 Summary
+=====================================================================
+
+Pricing models
+----------------
+1.On demand
+2.Reserve
+3.Spot
+4.Dedicated Hosts
+
+FIGHTDRMCPXZAU
+
+All incoming traffic is blocked by default,outgoing is not blocked
+Security groups are stateful
+You cannot specific IP address using Security groups
+You can only specify allow rules in SG
+
+EBS
+----
+General purpose (gp1)
+Provisioned IOPS (iop1)
+Trhough optimized (st1)
+Cold storage (sc1)
+Standard
+
+Volumes exists on EBS
+snapshots exists on s3
+snapshots are point in time copies of volumes
+snapshots are incrementl -this means that only delta is stored
+
+You should stop ec2 before snaphost for best result
+VOlumes always be in the same AZ as EC2
+you can change EBS volumes sizes on the fly,including changing hthe size and storage type
+You can create AMI's from both Volumes and snapshots
+
+Snapshots of encrypted volumes are encypted
+Only unencrypted snapshots can be shared
+
+
+Instance store volume are ephemeral
+Instance stores volumes cannot be stopped if the host fails
+EBS backed instances can be stopped
+you can reboot both,you will not loose data
+By default both root volumes will be deleted on termination,However with EBS
+   volumes you can tell aws to keep the root device volume
+
+CloudWatch
+----------
+Dashboards
+Alarms -Allows you to set alarms that notify you when particular
+Events - helps you to respond to state change in you aws resouced -
+Logs - aggregate,monitor and store logs
+
+Cloudwatch -- Performance
+CloudTrail -- Monitor API calls
+
+
+
+

@@ -1,0 +1,11 @@
+Definition:
+------------
+ You can easily customize the network configuration for you amazon virtual private cloud
+ For example you can create public facing subnet for your webervers that access to the internet
+ and place your backend systems such as db in private facing subnet with no internet acess.
+ You can leverage multiple layers of security inclduing SG,NACL
+
+Traffic -> Internet Gateway --> Router ---> Route Table ---> NACL --> Security Group ---> EC2
+                  (or)
+           Virtual Private Gateway
+
